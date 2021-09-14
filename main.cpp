@@ -63,13 +63,12 @@ int main(int argc, char** argv) {
 	ft::vector<Buffer> vector_buffer;
 	//	ft::stack<Buffer, std::deque<int> > stack_deq_buffer;
 	//	ft::map<int, int> map_int;
-	ft::vector<int> *test = new ft::vector<int>();
-	(void)test;
+	//ft::vector<int> *test = new ft::vector<int>();
+	//(void)test;
 	ft::vector<int> v(4);
 	ft::vector<int> vc(v.begin(), v.end());
 	ft::vector<int> vcc(vc);
 	ft::vector<int> vccc = v;
-
 
 	for(ft::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
 		std::cout << *it << "\n";
@@ -85,6 +84,13 @@ int main(int argc, char** argv) {
 	std::cout << std::endl;
 
 	vccc.resize(3);
+	std::cout << "c: " << vccc.capacity() << std::endl;
+	vccc.resize(5);
+	std::cout << "c: " << vccc.capacity() << std::endl;
+	vccc.resize(10);
+	std::cout << "c: " << vccc.capacity() << std::endl;
+	vccc.resize(0);
+	std::cout << "c: " << vccc.capacity() << std::endl;
 	for(ft::vector<int>::iterator it = vccc.begin(); it != vccc.end(); ++it) {
 		std::cout << *it << "\n";
 	}
@@ -105,11 +111,46 @@ int main(int argc, char** argv) {
 
 
 
-	
-	
-	
+
+	ft::vector<int> myvecto (10);   // 10 zero-initialized elements
+
+	ft::vector<int>::size_type sz = myvecto.size();
+
+	// assign some values:
+	for (unsigned i=0; i<sz; i++) myvecto[i]=i;
+
+	// reverse vector using operator[]:
+	for (unsigned i=0; i<sz/2; i++)
+	{
+		int temp;
+		temp = myvecto[sz-1-i];
+		myvecto[sz-1-i]=myvecto[i];
+		myvecto[i]=temp;
+	}
+
+	std::cout << "myvector contains:";
+	for (unsigned i=0; i<sz; i++)
+		std::cout << ' ' << myvecto[i];
+	std::cout << '\n';
+
+
+	try {
+		// vector throws a length_error if resized above max_size
+		//ft::vector<int> myvec(4611686018427387905);
+		ft::vector<int> myvec;
+		myvec.resize(myvec.max_size()+1);
+	}
+	catch (const std::length_error& le) {
+		std::cerr << "Length error: " << le.what() << '\n';
+	}
+
+
+
+
+
+
 	/**
-	ft::vector<int> myvector1;
+	  ft::vector<int> myvector1;
 
 	// set some initial content:
 	for (int i=1;i<10;i++) myvector1.push_back(i);
@@ -120,9 +161,9 @@ int main(int argc, char** argv) {
 
 	std::cout << "myvector contains:";
 	for (int i=0;i<myvector1.size();i++)
-		std::cout << ' ' << myvector1[i];
+	std::cout << ' ' << myvector1[i];
 	std::cout << '\n';
-	**/
+	 **/
 
 	/**
 	  for (int i = 0; i < COUNT; i++)

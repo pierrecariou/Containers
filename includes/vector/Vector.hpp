@@ -25,10 +25,14 @@ namespace ft {
 				typedef Allocator										allocator_type;
 
 				// CONSTRUCTORS //
-				explicit vector (const allocator_type& alloc = allocator_type()) : alloc(alloc), n(0), c(0) { }
+				explicit vector (const allocator_type& alloc = allocator_type()) : alloc(alloc), n(0), c(0), first(NULL), last(NULL) { }
 
 				explicit vector (size_type n, const value_type& val = value_type(),
 				                 const allocator_type& alloc = allocator_type()) : alloc(alloc), n(n), c(n) {
+					if (c == 0) {
+						last = (first = NULL);
+						return ;
+					}
 					p = (first = this->alloc.allocate(n));
 					for (size_type i = 0; i < n; i++) {
 						*p = val;
@@ -43,7 +47,10 @@ namespace ft {
 					n = 0;
 					for (InputIterator i = first; i != last; i++)
 						n++;
-					c = n;
+					if ((c = n) == 0) {
+						this->last = (this->first = NULL);
+						return ;
+					}
 					p = (this->first = this->alloc.allocate(n));
 					for (size_type i = 0; i < n; i++) {
 						*p = *first;
@@ -54,6 +61,10 @@ namespace ft {
 				}
 
 				vector (const vector& x) : alloc(x.get_allocator()), n(x.size()), c(x.capacity()) {
+					if (c == 0) {
+						last = (first = NULL);
+						return ;
+					}
 					p = (this->first = this->alloc.allocate(c));
 					for (const_iterator i = x.begin(); i != x.end(); i++)	{
 						*p = *i;
@@ -78,6 +89,10 @@ namespace ft {
 					~vector();
 					c = x.capacity();
 					n = x.size();
+					if (c == 0) {
+						last = (first = NULL);
+						return ;
+					}
 					p = (first = alloc.allocate(c));
 					for (const_iterator i = x.begin(); i != x.end(); i++)	{
 						*p = *i;
@@ -128,25 +143,24 @@ namespace ft {
 					return alloc.max_size();
 				}
 
-				void resize (size_type n, value_type val = value_type()) {
+				void resize (size_type n, value_type val = value_type()) {	
 					p = first;
 					if (n < size()) {
+						if (n == 0)
+							last = first;
 						for (size_t i = 0; i < this->n; i++) {
-							if (i >= n){
-								std::cout << "test" << std::endl;
+							if (i >= n)
 								alloc.destroy(p);
-							}
 							else
 								last = p + 1;
 							p++;
 						}
 						this->n = n;
 					} else if (n > size()) {
-						if (n > c)
-							std::cout <<  "realloc" << std::endl;
+						reserve(n);
 						for (size_t i = 0; i < n; i++) {
 							if (i >= this->n)
-								*p = val;	
+								*p = val;
 							p++;
 						}
 						last = p;
@@ -156,14 +170,50 @@ namespace ft {
 
 				size_type capacity() const {
 					return c;
+				}	
+
+				bool empty() const {
+					return (n == 0);
+				}
+
+				void reserve (size_type n) {
+					if (n > max_size())
+						throw (std::length_error("vector::_M_fill_insert"));
+					if (n > capacity()) {
+						vector<value_type>	tmp = *this;
+						this->~vector();
+						p = (first = this->alloc.allocate((c = (n > size() * 2) ? n : size() * 2)));
+						for (iterator it = tmp.begin(); it != tmp.end(); it++) {
+							*p = *it;
+							p++;
+						}
+						last = p;
+					}
+					p = first;
+				}
+
+				// ELEMENT ACCESS //
+				reference operator[] (size_type n) {
+					p = first;
+					for (size_type i = 0; i < n; i++)
+						p++;
+					return *p;
+				}
+				const_reference operator[] (size_type n) const {
+					return operator[](n);
 				}
 
 				allocator_type get_allocator() const {
 					return alloc;
 				}
 
-				bool empty() const {
-					return (n == 0);
+				reference at (size_type n) {
+					(void)n;
+				}
+				
+				const_reference at (size_type n) const {
+					(void)n;
+
 				}
 
 			private:

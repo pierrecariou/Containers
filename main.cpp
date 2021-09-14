@@ -134,16 +134,52 @@ int main(int argc, char** argv) {
 	std::cout << '\n';
 
 
-	try {
-		// vector throws a length_error if resized above max_size
-		//ft::vector<int> myvec(4611686018427387905);
-		ft::vector<int> myvec;
-		myvec.resize(myvec.max_size()+1);
+	ft::vector<int> first;
+	ft::vector<int> second;
+	ft::vector<int> third;
+
+	first.assign(7,100);             // 7 ints with a value of 100
+
+	ft::vector<int>::iterator it;
+	it=first.begin()+1;
+
+	second.assign (it,first.end()-1); // the 5 central values of first
+
+	int myints[] = {1776,7,4};
+	third.assign (myints,myints+3);   // assigning from array.
+
+	
+
+
+	std::cout << "Size of first: " << int (first.size()) << '\n';
+	std::cout << "Size of second: " << int (second.size()) << '\n';
+	std::cout << "Size of third: " << int (third.size()) << '\n';
+	third.assign(0, 100);
+	std::cout << "Size of third: " << int (third.size()) << '\n';
+	third.assign(first.begin(), first.end());
+	std::cout << "Size of third: " << int (third.size()) << '\n';
+	third.assign(first.begin(), first.begin());
+	std::cout << "Size of third: " << int (third.size()) << '\n';
+
+
+	/**
+	  try {
+	// vector throws a length_error if resized above max_size
+	//ft::vector<int> myvec(4611686018427387905);
+	ft::vector<int> myvec;
+	myvec.resize(myvec.max_size()+1);
 	}
 	catch (const std::length_error& le) {
-		std::cerr << "Length error: " << le.what() << '\n';
+	std::cerr << "Length error: " << le.what() << '\n';
 	}
-
+	 **/
+	ft::vector<int> myvec(10);
+	try {
+		myvec.at(20)=100;      // vector::at throws an out-of-range
+	}
+	catch (const std::out_of_range& oor) {
+		std::cerr << "Out of Range error: " << oor.what() << '\n';
+	}
 
 
 

@@ -3,7 +3,8 @@
 
 #include "Iterator.hpp"
 
-#include <iostream>
+#include <stdlib.h>
+#include <sstream>
 
 namespace ft {
 
@@ -201,20 +202,86 @@ namespace ft {
 				}
 				const_reference operator[] (size_type n) const {
 					return operator[](n);
+				}	
+
+				reference at (size_type n) {
+					if (n >= size()) {
+						std::stringstream n_s;
+						std::stringstream size_s;
+						n_s << n;
+						size_s << size();
+						throw std::out_of_range("vector::_M_range_check: __n (which is " +
+						n_s.str() +") >= this->size() (which is " + size_s.str() + ")");
+					}
+					return operator[](n);
+				}
+				
+				const_reference at (size_type n) const {
+					return at(n);
 				}
 
+				reference front() {
+					return *first;
+				}
+
+				const_reference front() const {
+					return front();
+				}
+
+				reference back() {
+					return *(last - 1);
+				}
+
+				const_reference back() const {
+					return back();
+				}
+
+				// MODIFIERS //
+				template <class InputIterator>
+				void assign (InputIterator first, typename enable_if<!is_integral<InputIterator>::value,
+							InputIterator>::type last) {
+					this->~vector();
+					if (first == last) {
+						this->n = (c = 0);
+						first = (last = NULL);
+						return ;
+					}
+					n = 0;
+					for (InputIterator i = first; i != last; i++)
+						n++;
+					c = n;
+					p = (this->first = this->alloc.allocate(n));
+					for (size_type i = 0; i < n; i++) {
+						*p = *first;
+						first++;
+						p++;
+					}
+					this->last = p;
+				}
+
+				void assign (size_type n, const value_type& val) {
+					this->~vector();
+					if (n == 0) {
+						this->n = (c = n);
+						first = (last = NULL);
+						return ;
+					}
+					p = (first = this->alloc.allocate((this->n = (c = n))));
+					for (size_type i = 0; i < n; i++) {
+						*p = val;
+						p++;
+					}
+					last = p;
+				}
+
+				// ALLOCATOR //
 				allocator_type get_allocator() const {
 					return alloc;
 				}
 
-				reference at (size_type n) {
-					(void)n;
-				}
 				
-				const_reference at (size_type n) const {
-					(void)n;
 
-				}
+
 
 			private:
 				allocator_type			alloc;

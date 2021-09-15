@@ -51,6 +51,17 @@ namespace ft {
 			typedef random_access_iterator_tag		iterator_category;
 		};
 
+	typedef std::size_t	size_type;	
+
+	template <class InputIterator>
+	size_type	distance(InputIterator first, InputIterator last) {
+		size_type	ret = 0;
+		for (InputIterator it = first; it < last; it++)
+			ret++;
+		return ret;
+	}
+	
+
 }
 
 #endif

@@ -52,6 +52,7 @@ namespace ft {
 			Iterator operator--(value_type) {Iterator tmp(*this); operator--(); return tmp;}
 			Iterator operator+(difference_type n) const {Iterator tmp(*this); tmp.p+=n; return tmp;}
 			Iterator operator-(difference_type n) const {Iterator tmp(*this); tmp.p-=n; return tmp;}
+			Iterator& operator+=(difference_type n) {p+=n; return *this;}
 			bool operator==(const Iterator& rhs) const {return p==rhs.p;}
 			bool operator!=(const Iterator& rhs) const {return p!=rhs.p;}
 			bool operator>(const Iterator& rhs) const {return p>rhs.p;}

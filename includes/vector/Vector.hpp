@@ -2,6 +2,7 @@
 # define VECTOR_HPP
 
 #include "Iterator.hpp"
+#include "../algorithm.hpp"
 
 #include <stdlib.h>
 #include <sstream>
@@ -46,9 +47,7 @@ namespace ft {
 				template <class InputIterator>
 				vector (InputIterator first, typename enable_if<!is_integral<InputIterator>::value,
 				InputIterator>::type last, const allocator_type& alloc = allocator_type()) : alloc(alloc) {
-					n = 0;
-					for (InputIterator i = first; i != last; i++)
-						n++;
+					n = ft::distance(first, last);
 					if ((c = n) == 0) {
 						this->last = (this->first = NULL);
 						return ;
@@ -247,10 +246,7 @@ namespace ft {
 						first = (last = NULL);
 						return ;
 					}
-					n = 0;
-					for (InputIterator i = first; i != last; i++)
-						n++;
-					c = n;
+					c = (n = ft::distance(first, last));
 					p = (this->first = this->alloc.allocate(n));
 					for (size_type i = 0; i < n; i++) {
 						*p = *first;
@@ -292,9 +288,7 @@ namespace ft {
 					vector<value_type>	tmp(*this);
 					iterator	it_tmp = tmp.begin();
 					iterator	ret;
-					size_t		pos = 0;
-					for (iterator it = begin(); it != position; it++)
-						pos++;
+					size_t		pos = ft::distance(begin(), position);
 					reserve(n + 1);
 					n+=1;
 					last+=1;
@@ -316,9 +310,7 @@ namespace ft {
 				void insert (iterator position, size_type n, const value_type& val) {
 					vector<value_type>	tmp(*this);
 					iterator	it_tmp = tmp.begin();
-					size_t		pos = 0;
-					for (iterator it = begin(); it != position; it++)
-						pos++;
+					size_t		pos = ft::distance(begin(), position);
 					reserve(this->n + n);
 					this->n+=n;
 					last+=n;
@@ -343,12 +335,8 @@ namespace ft {
 							InputIterator>::type last) {
 					vector<value_type>	tmp(*this);
 					iterator			it_tmp = tmp.begin();
-					size_t				count = 0;
-					for (InputIterator it = first; it != last; it++)
-						count++;
-					size_t				pos = 0;
-					for (iterator it = begin(); it != position; it++)
-						pos++;
+					size_t				count = ft::distance(first, last);
+					size_t				pos = ft::distance(begin(), position);
 					reserve(this->n + count);
 					this->n+=count;
 					this->last+=count;
@@ -366,17 +354,94 @@ namespace ft {
 							*p++ = *it_tmp++;
 					}
 				}
+				
+				iterator erase (iterator position) {
+					vector<value_type>	tmp(*this);
+					iterator			it_tmp = tmp.begin();
+					iterator			ret;
+					iterator			cp;
+					p = first;
+					n-=1;
+					for (iterator it = begin(); it != position; it++) {
+						p++;
+						it_tmp++;
+					}
+					it_tmp++;
+					cp = it_tmp;
+					for (iterator it = it_tmp; it < tmp.end(); it++) {
+						alloc.destroy(p);
+						*p = *it_tmp;
+						if (cp == it_tmp)
+							ret = iterator(p);
+						p++;
+						it_tmp++;
+					}
+					for (iterator it = iterator(p); it < end(); it++) {
+						alloc.destroy(p);
+						p++;
+					}
+					last-=1;
+					return (ret);
+				}
 
+				iterator erase (iterator first, iterator last) {
+					vector<value_type>	tmp(*this);
+					iterator			it_tmp = tmp.begin();
+					iterator			ret;
+					iterator			cp;
+					size_t				count = ft::distance(first, last);
+					p = this->first;
+					n-=count;
+					for (iterator it = begin(); it != first; it++) {
+						p++;
+						it_tmp++;
+					}
+					it_tmp+=count;
+					cp = it_tmp;
+					for (iterator it = first; it != last; it++) {
+						alloc.destroy(p);
+						if (it_tmp < tmp.end())
+							*p = *it_tmp;
+						if (cp == it_tmp)
+							ret = iterator(p);
+						p++;
+						it_tmp++;
+					}
+					for (iterator it = it_tmp; it < tmp.end(); it++) {
+						alloc.destroy(p);
+						*p = *it_tmp;
+						p++;
+						it_tmp++;
+					}
+					for (iterator it = iterator(p); it < end(); it++) {
+						alloc.destroy(p);
+						p++;
+					}
+					this->last-=count;
+					return (ret);
+				}
 
+				void swap (vector& x) {
+					ft::swap(alloc, x.alloc);
+					ft::swap(n, x.n);
+					ft::swap(c, x.c);
+					ft::swap(first, x.first);
+					ft::swap(last, x.last);
+				}
+
+				void clear() {
+					p = first;
+					for (size_type i = 0; i < n; i++)
+						alloc.destroy(p++);
+					n = 0;
+					last = first;
+				}
+				
 				// ALLOCATOR //
 				allocator_type get_allocator() const {
 					return alloc;
 				}
-
 				
-
-
-
 			private:
 				allocator_type			alloc;
 				size_type				n;

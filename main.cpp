@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#if 1 //CREATE A REAL STL EXAMPLE
+#if STL //CREATE A REAL STL EXAMPLE
 #include <map>
 #include <stack>
 #include <vector>
@@ -185,6 +185,7 @@ int main(int argc, char** argv) {
 	ite = vector.begin();
 	ite = vector.insert ( ite , 200 );
 
+	std::cout << "a: " << *ite << std::endl;
 	vector.insert (ite,2,300);
 
 	// "it" no longer valid, get a new one:
@@ -205,7 +206,81 @@ int main(int argc, char** argv) {
 	std::cout << '\n';
 
 	std::cout << "myvector capacity: " << vector.capacity() << std::endl;
+	std::cout << "myvector size: " << vector.size() << std::endl;
 
+
+
+	{
+		ft::vector<int> myvector;
+
+		// set some values (from 1 to 10)
+		for (int i=1; i<=10; i++) myvector.push_back(i);
+
+		// erase the 6th element
+		ft::vector<int>::iterator it = myvector.erase (myvector.begin()+5);
+
+		std::cout << "myvector contains:";
+
+		for (unsigned i=0; i<myvector.size(); ++i)
+			std::cout << ' ' << myvector[i];
+		std::cout << '\n';
+
+
+		// erase the first 3 elements:
+		std::cout << "a: " << *myvector.erase(myvector.begin(),myvector.begin()+3) << std::endl;
+
+		std::cout << "myvector contains:";
+		for (unsigned i=0; i<myvector.size(); ++i)
+			std::cout << ' ' << myvector[i];
+		std::cout << '\n';
+		std::cout << "c: " << myvector.capacity() << std::endl;
+		std::cout << "s: " << myvector.size() << std::endl;
+		std::cout << "a: " << *it << std::endl;
+
+	}
+
+	{
+		ft::vector<int> foo (3,100);   // three ints with a value of 100
+		ft::vector<int> bar (5,200);   // five ints with a value of 200
+
+
+		std::cout << "before swap first elem foo addr: " << &(*foo.begin()) << std::endl;
+		foo.swap(bar);
+		std::cout << "after swap first elem bar addr: " << &(*bar.begin()) << std::endl;
+
+		std::cout << "foo contains:";
+		for (unsigned i=0; i<foo.size(); i++)
+			std::cout << ' ' << foo[i];
+		std::cout << "\nfoo capacity: " << foo.capacity() << std::endl;
+
+		std::cout << "bar contains:";
+		for (unsigned i=0; i<bar.size(); i++)
+			std::cout << ' ' << bar[i];
+		std::cout << "\nbar capacity: " << bar.capacity() << std::endl;
+	}
+
+	{
+		ft::vector<int> myvector;
+		myvector.push_back (100);
+		myvector.push_back (200);
+		myvector.push_back (300);
+
+		std::cout << "myvector contains:";
+		for (unsigned i=0; i<myvector.size(); i++)
+			std::cout << ' ' << myvector[i];
+		std::cout << "\nc: " << myvector.capacity();
+		std::cout << '\n';
+
+		myvector.clear();
+		myvector.push_back (1101);
+		myvector.push_back (2202);
+
+		std::cout << "myvector contains:";
+		for (unsigned i=0; i<myvector.size(); i++)
+			std::cout << ' ' << myvector[i];
+		std::cout << "\nc: " << myvector.capacity();
+		std::cout << '\n';
+	}
 
 	/**
 	  try {

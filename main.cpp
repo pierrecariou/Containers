@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#if 0 //CREATE A REAL STL EXAMPLE
+#if 1 //CREATE A REAL STL EXAMPLE
 #include <map>
 #include <stack>
 #include <vector>
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
 	int myints[] = {1776,7,4};
 	third.assign (myints,myints+3);   // assigning from array.
 
-	
+
 
 
 	std::cout << "Size of first: " << int (first.size()) << '\n';
@@ -160,6 +160,51 @@ int main(int argc, char** argv) {
 	std::cout << "Size of third: " << int (third.size()) << '\n';
 	third.assign(first.begin(), first.begin());
 	std::cout << "Size of third: " << int (third.size()) << '\n';
+
+
+
+	ft::vector<int> myv;
+
+	myv.push_back(10);
+
+	while (myv.back() != 0)
+	{
+		myv.push_back ( myv.back() -1 );
+	}
+
+	std::cout << "myvector contains:";
+	myv.pop_back();
+	for (unsigned i=0; i<myv.size() ; i++)
+		std::cout << ' ' << myv[i];
+	std::cout << '\n';
+
+
+	ft::vector<int> vector (3,100);
+	ft::vector<int>::iterator ite;
+
+	ite = vector.begin();
+	ite = vector.insert ( ite , 200 );
+
+	vector.insert (ite,2,300);
+
+	// "it" no longer valid, get a new one:
+	ite = vector.begin();
+
+	vector.begin();
+	ft::vector<int> anothervec (2,400);
+	//std::cout <<"main: " << &(*(vector.begin() + 2)) << std::endl;
+	//std::cout << "main: "<< &(*(ite + 2)) << std::endl;
+	vector.insert(ite + 2, anothervec.begin(), anothervec.end());
+
+	int myarray [] = { 501,502,503 };
+	vector.insert (vector.begin(), myarray, myarray+3);
+
+	std::cout << "myvector contains:";
+	for (it=vector.begin(); it < vector.end(); it++)
+		std::cout << ' ' << *it;
+	std::cout << '\n';
+
+	std::cout << "myvector capacity: " << vector.capacity() << std::endl;
 
 
 	/**

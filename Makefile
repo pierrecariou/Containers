@@ -4,7 +4,7 @@ HEADER          = ./
 
 SRCS            = main.cpp
 
-CFLAGS          = -std=c++98 -pedantic -Wall -Wextra -Werror
+CFLAGS          = -std=c++98 -g -pedantic -Wall -Wextra -Werror
 
 all:            $(NAME)
 

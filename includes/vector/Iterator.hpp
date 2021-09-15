@@ -47,11 +47,15 @@ namespace ft {
 			Iterator(It x) : p(x) {}
 			Iterator(const Iterator& mit) : p(mit.p) {}
 			Iterator& operator++() {++p;return *this;}
+			Iterator& operator--() {--p;return *this;}
 			Iterator operator++(value_type) {Iterator tmp(*this); operator++(); return tmp;}
+			Iterator operator--(value_type) {Iterator tmp(*this); operator--(); return tmp;}
 			Iterator operator+(difference_type n) const {Iterator tmp(*this); tmp.p+=n; return tmp;}
 			Iterator operator-(difference_type n) const {Iterator tmp(*this); tmp.p-=n; return tmp;}
 			bool operator==(const Iterator& rhs) const {return p==rhs.p;}
 			bool operator!=(const Iterator& rhs) const {return p!=rhs.p;}
+			bool operator>(const Iterator& rhs) const {return p>rhs.p;}
+			bool operator<(const Iterator& rhs) const {return p<rhs.p;}
 			Ref operator*() {return *p;}
 		private:
 			It	p;

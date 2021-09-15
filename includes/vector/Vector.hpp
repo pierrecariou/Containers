@@ -26,7 +26,8 @@ namespace ft {
 				typedef Allocator										allocator_type;
 
 				// CONSTRUCTORS //
-				explicit vector (const allocator_type& alloc = allocator_type()) : alloc(alloc), n(0), c(0), first(NULL), last(NULL) { }
+				explicit vector (const allocator_type& alloc = allocator_type()) :
+								alloc(alloc), n(0), c(0), first(NULL), last(NULL) { }
 
 				explicit vector (size_type n, const value_type& val = value_type(),
 				                 const allocator_type& alloc = allocator_type()) : alloc(alloc), n(n), c(n) {
@@ -43,8 +44,8 @@ namespace ft {
 				}
 
 				template <class InputIterator>
-				vector (InputIterator first, InputIterator last,
-						const allocator_type& alloc = allocator_type()) : alloc(alloc) {
+				vector (InputIterator first, typename enable_if<!is_integral<InputIterator>::value,
+				InputIterator>::type last, const allocator_type& alloc = allocator_type()) : alloc(alloc) {
 					n = 0;
 					for (InputIterator i = first; i != last; i++)
 						n++;
@@ -273,6 +274,99 @@ namespace ft {
 					}
 					last = p;
 				}
+
+				void push_back (const value_type& val) {
+					reserve(n + 1);
+					n+=1;
+					*last = val;
+					last+=1;
+				}
+
+				void pop_back() {
+					alloc.destroy(last - 1);
+					n-=1;
+					last-=1;
+				}
+
+				iterator insert (iterator position, const value_type& val) {
+					vector<value_type>	tmp(*this);
+					iterator	it_tmp = tmp.begin();
+					iterator	ret;
+					size_t		pos = 0;
+					for (iterator it = begin(); it != position; it++)
+						pos++;
+					reserve(n + 1);
+					n+=1;
+					last+=1;
+					p = first;
+					for (size_t i = 0; i < pos; i++) {
+						p++;
+						it_tmp++;
+					}
+					alloc.destroy(p);
+					*p++ = val;
+					ret = iterator(p - 1);
+					for (iterator it = it_tmp; it != tmp.end(); it++) {
+							alloc.destroy(p);
+							*p++ = *it_tmp++;
+					}
+					return ret;
+				}
+
+				void insert (iterator position, size_type n, const value_type& val) {
+					vector<value_type>	tmp(*this);
+					iterator	it_tmp = tmp.begin();
+					size_t		pos = 0;
+					for (iterator it = begin(); it != position; it++)
+						pos++;
+					reserve(this->n + n);
+					this->n+=n;
+					last+=n;
+					p = first;
+					for (size_t i = 0; i < pos; i++) {
+						p++;
+						it_tmp++;
+					}
+					for (size_type i = 0; i < n; i++) {
+						alloc.destroy(p);
+						*p++ = val;
+					}
+					for (iterator it = it_tmp; it != tmp.end(); it++) {
+							alloc.destroy(p);
+							*p++ = *it_tmp++;
+					}
+				}
+
+				template <class InputIterator>
+				void insert (iterator position, InputIterator first,
+							typename enable_if<!is_integral<InputIterator>::value,
+							InputIterator>::type last) {
+					vector<value_type>	tmp(*this);
+					iterator			it_tmp = tmp.begin();
+					size_t				count = 0;
+					for (InputIterator it = first; it != last; it++)
+						count++;
+					size_t				pos = 0;
+					for (iterator it = begin(); it != position; it++)
+						pos++;
+					reserve(this->n + count);
+					this->n+=count;
+					this->last+=count;
+					p = this->first;
+					for (size_t i = 0; i < pos; i++) {
+						p++;
+						it_tmp++;
+					}
+					for (InputIterator it = first; it != last; it++) {
+						alloc.destroy(p);
+						*p++ = *it;
+					}
+					for (iterator it = it_tmp; it != tmp.end(); it++) {
+							alloc.destroy(p);
+							*p++ = *it_tmp++;
+					}
+				}
+
 
 				// ALLOCATOR //
 				allocator_type get_allocator() const {

@@ -23,7 +23,7 @@ namespace ft {
 					friend class map;
 					protected:
 					Compare comp;
-					value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
+					value_compare (Compare c) : comp(c) {}  // constructed with map's comparison objec
 					public:
 					typedef bool result_type;
 					typedef value_type first_argument_type;

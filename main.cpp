@@ -294,6 +294,15 @@ int main(int argc, char** argv) {
 		if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 	}
 
+	// iterators
+
+	{
+		ft::vector<int>	v(4);
+		v.push_back(11);
+		ft::vector<int>::iterator it = v.begin();
+		std::cout << it[4] << std::endl;
+	}
+
 	/**
 	  try {
 	// vector throws a length_error if resized above max_size

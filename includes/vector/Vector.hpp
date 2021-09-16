@@ -13,18 +13,18 @@ namespace ft {
 		class vector {
 			public:
 				//define types
-				typedef T														value_type;
-				typedef value_type*												pointer;
-				typedef const value_type*										const_pointer;
-				typedef value_type&												reference;
-				typedef const value_type&										const_reference;
-				typedef Iterator<pointer, reference, value_type>				iterator;
-				typedef Iterator<const_pointer, const_reference, value_type>	const_iterator;
-				typedef ReverseIterator<pointer, reference, value_type>			reverse_iterator;
+				typedef T															value_type;
+				typedef value_type*													pointer;
+				typedef const value_type*											const_pointer;
+				typedef value_type&													reference;
+				typedef const value_type&											const_reference;
+				typedef Iterator<pointer, reference, value_type>					iterator;
+				typedef Iterator<const_pointer, const_reference, value_type>		const_iterator;
+				typedef ReverseIterator<pointer, reference, value_type>				reverse_iterator;
 				typedef ReverseIterator<const_pointer, const_reference, value_type>	const_reverse_iterator;
-				typedef std::ptrdiff_t											difference_type;
-				typedef std::size_t												size_type;
-				typedef Allocator												allocator_type;
+				typedef std::ptrdiff_t												difference_type;
+				typedef std::size_t													size_type;
+				typedef Allocator													allocator_type;
 
 				// CONSTRUCTORS //
 				explicit vector (const allocator_type& alloc = allocator_type()) :

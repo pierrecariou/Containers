@@ -341,8 +341,7 @@ int main(int argc, char** argv) {
 			s.pop();
 		}
 		std::cout << std::endl;
-	}
-
+	}	
 
 	/**
 	  try {
@@ -364,11 +363,41 @@ int main(int argc, char** argv) {
 	}
 
 
+	//pair make_pair
 
+	ft::pair <int,int> foo;
+	ft::pair <int,int> bar;
+
+	foo = ft::make_pair (10,20);
+	bar = ft::make_pair (10.5,'A'); // ok: implicit conversion from pair<double,char>
+
+	std::cout << "foo: " << foo.first << ", " << foo.second << '\n';
+	std::cout << "bar: " << bar.first << ", " << bar.second << '\n';
+
+
+	ft::pair <std::string,double> product1;                     // default constructor
+	ft::pair <std::string,double> product2 ("tomatoes",2.30);   // value init
+	ft::pair <std::string,double> product3 (product2);          // copy constructor
+
+	product1 = ft::make_pair(std::string("lightbulbs"),0.99);   // using make_pair (move)
+
+	product2.first = "shoes";                  // the type of first is string
+	product2.second = 39.90;                   // the type of second is double
+
+	std::cout << "The price of " << product1.first << " is $" << product1.second << '\n';
+	std::cout << "The price of " << product2.first << " is $" << product2.second << '\n';
+	std::cout << "The price of " << product3.first << " is $" << product3.second << '\n';
+
+	//TEST MAP
+
+	ft::map<char,int> mymap;
+
+	ft::map<char,int>::key_compare mycomp = mymap.key_comp();
+	std::cout << mycomp(3, 2)  << std::endl;
 
 
 	/**
-	  ft::vector<int> myvector1;
+	  ft::vector<int> myvector2;
 
 	// set some initial content:
 	for (int i=1;i<10;i++) myvector1.push_back(i);

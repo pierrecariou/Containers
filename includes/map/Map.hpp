@@ -1,8 +1,9 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-#include "Iterator.hpp"
+#include "IteratorBidirectional.hpp"
 #include "utility.hpp"
+#include "node.hpp"
 #include "../algorithm.hpp"
 
 #include <stdlib.h>
@@ -16,7 +17,7 @@ namespace ft {
 				// define types
 				typedef Key										key_type;
 				typedef T										mapped_type;
-				typedef pair<const key_type, mapped_type>	value_type;
+				typedef pair<const key_type, mapped_type>		value_type;
 				typedef Compare									key_compare;
 				class value_compare
 				{
@@ -38,61 +39,71 @@ namespace ft {
 				typedef typename allocator_type::const_reference					const_reference;
 				typedef typename allocator_type::pointer							pointer;
 				typedef typename allocator_type::const_pointer						const_pointer;
-				typedef Iterator<pointer, reference, value_type>					iterator;
-				typedef Iterator<const_pointer, const_reference, value_type>		const_iterator;
-				typedef ReverseIterator<pointer, reference, value_type>				reverse_iterator;
-				typedef ReverseIterator<const_pointer, const_reference, value_type>	const_reverse_iterator;
+				typedef IteratorBidirectional<node<value_type, allocator_type, key_type, mapped_type, key_compare>*, node<value_type, allocator_type, key_type, mapped_type, key_compare>& > iterator;
+				typedef IteratorBidirectional<const_pointer, const_reference>		const_iterator;
+				typedef ReverseIteratorBidirectional<pointer, reference>				reverse_iterator;
+				typedef ReverseIteratorBidirectional<const_pointer, const_reference>	const_reverse_iterator;
 				typedef std::ptrdiff_t												difference_type;
 				typedef std::size_t													size_type;
 
 				// CONSTRUCTORS //
 				explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-					alloc(alloc), n(0), c(0), first(NULL), last(NULL), comp(comp) { }
+					alloc(alloc), n(0), c(0), root(NULL), p(NULL), comp(comp) { }
 
-/*
 				template <class InputIterator>
 				map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-						        const allocator_type& alloc = allocator_type()) : alloc(alloc) {
-					n = ft::distance(first, last);
-					if ((c = n) == 0) {
-						this->last = (this->first = NULL);
-						return ;
+						        const allocator_type& alloc = allocator_type()) : alloc(alloc), comp(comp) {
+					//n = ft::distance(first, last);
+					//if ((c = n) == 0) {
+					//	this->last = (this->first = NULL);
+					//	return ;
+					//}
+					(void)comp;
+					n = 0;
+					*first = *first;
+					*last = *last;
+					for (InputIterator it = first; it != last; it++) {
+						std::cout << "test" << std::endl;
+						n++;
 					}
-					p = (this->first = this->alloc.allocate(n));
-					for (size_type i = 0; i < n; i++) {
-						*p = *first;
-						first++;
-						p++;
-					}
-					this->last = p;
 				}
-				*/
 
 				map (const map& x);
 				
-				
-
-
-
-
 					
-
+				
+				
 				key_compare key_comp() const {
 					return comp;
 				}
 
+				iterator begin() {
+					return iterator(root->first);
+				}
 
+/**
+				iterator end() {
+					return iterator(last);
+				}
+				**/
 
+				mapped_type& operator[] (const key_type& k) {
+					if (root == NULL)
+						return ((root = new node(alloc, comp, 0, k))->data->second);
+					return root->find(k)->data->second;
+				}
 
 			private:
-				allocator_type			alloc;
-				size_type				n;
-				size_type				c;
-				pointer					first;
-				pointer					last;
-				pointer					p;
-				key_compare				comp;
+				typedef node<value_type, allocator_type, key_type, mapped_type, key_compare>*	node_pointer;
+				typedef node<value_type, allocator_type, key_type, mapped_type, key_compare>	node;
 
+				allocator_type							alloc;
+				size_type								n;
+				size_type								c;
+				value_type*								pair;
+				node_pointer							root;
+				node_pointer							p;
+				key_compare								comp;
 
 		};
 }

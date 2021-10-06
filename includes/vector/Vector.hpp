@@ -1,7 +1,7 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-#include "Iterator.hpp"
+#include "IteratorRandomAccess.hpp"
 #include "../algorithm.hpp"
 
 #include <stdlib.h>
@@ -18,10 +18,10 @@ namespace ft {
 				typedef const value_type*											const_pointer;
 				typedef value_type&													reference;
 				typedef const value_type&											const_reference;
-				typedef Iterator<pointer, reference, value_type>					iterator;
-				typedef Iterator<const_pointer, const_reference, value_type>		const_iterator;
-				typedef ReverseIterator<pointer, reference, value_type>				reverse_iterator;
-				typedef ReverseIterator<const_pointer, const_reference, value_type>	const_reverse_iterator;
+				typedef IteratorRandomAccess<pointer, reference>					iterator;
+				typedef IteratorRandomAccess<const_pointer, const_reference>		const_iterator;
+				typedef ReverseIteratorRandomAccess<pointer, reference>				reverse_iterator;
+				typedef ReverseIteratorRandomAccess<const_pointer, const_reference>	const_reverse_iterator;
 				typedef std::ptrdiff_t												difference_type;
 				typedef std::size_t													size_type;
 				typedef Allocator													allocator_type;

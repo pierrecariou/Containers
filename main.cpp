@@ -46,6 +46,14 @@ struct Buffer
   };
  **/
 
+
+bool fncomp (char lhs, char rhs) {return lhs<rhs;}
+
+struct classcomp {
+	bool operator() (const char& lhs, const char& rhs) const
+	{return lhs<rhs;}
+};
+
 int main(int argc, char** argv) {
 	if (argc != 2)
 	{
@@ -393,7 +401,29 @@ int main(int argc, char** argv) {
 	ft::map<char,int> mymap;
 
 	ft::map<char,int>::key_compare mycomp = mymap.key_comp();
-	std::cout << mycomp(3, 2)  << std::endl;
+	std::cout << mycomp(2, 3)  << std::endl;
+
+	{
+	std::cout << std::endl;
+	ft::map<char,int> first;
+
+	first['z']=10;
+	std::cout << first['z'] << std::endl;
+	std::cout << (first['b'] = 30) << std::endl;
+	std::cout << first['b']  << std::endl;
+	first['c']=50;
+	first['d']=70;
+	first['a']=90;
+	std::cout << first['d']  << " " << first['c'] << first['a'] << std::endl;
+	//ft::map<char,int> second (first.begin(),first.end());
+
+	//std::map<char,int> third (second);
+
+	//std::map<char,int,classcomp> fourth;                 // class as Compare
+
+	//bool(*fn_pt)(char,char) = fncomp;
+	//std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
+	}
 
 
 	/**

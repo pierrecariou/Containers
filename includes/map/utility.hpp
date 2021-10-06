@@ -9,8 +9,8 @@ namespace ft {
 			typedef T2	second_type;
 
 			// Member variables
-			T1	first;
-			T2	second;
+			first_type	first;
+			second_type	second;
 
 			// CONSTRUCTORS //
 			pair() : first(T1()), second(T2()) {}

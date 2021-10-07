@@ -39,7 +39,7 @@ namespace ft {
 				typedef typename allocator_type::const_reference					const_reference;
 				typedef typename allocator_type::pointer							pointer;
 				typedef typename allocator_type::const_pointer						const_pointer;
-				typedef IteratorBidirectional<node<value_type, allocator_type, key_type, mapped_type, key_compare>*, node<value_type, allocator_type, key_type, mapped_type, key_compare>& > iterator;
+				typedef IteratorBidirectional<node<value_type, allocator_type, key_type, mapped_type, key_compare>*, value_type& > iterator;
 				typedef IteratorBidirectional<const_pointer, const_reference>		const_iterator;
 				typedef ReverseIteratorBidirectional<pointer, reference>				reverse_iterator;
 				typedef ReverseIteratorBidirectional<const_pointer, const_reference>	const_reverse_iterator;
@@ -53,11 +53,6 @@ namespace ft {
 				template <class InputIterator>
 				map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 						        const allocator_type& alloc = allocator_type()) : alloc(alloc), comp(comp) {
-					//n = ft::distance(first, last);
-					//if ((c = n) == 0) {
-					//	this->last = (this->first = NULL);
-					//	return ;
-					//}
 					(void)comp;
 					n = 0;
 					*first = *first;
@@ -81,15 +76,14 @@ namespace ft {
 					return iterator(root->first);
 				}
 
-/**
 				iterator end() {
-					return iterator(last);
+					return iterator(root->last);
 				}
-				**/
 
 				mapped_type& operator[] (const key_type& k) {
 					if (root == NULL)
 						return ((root = new node(alloc, comp, 0, k))->data->second);
+					//std::cout << k << ": " << root->first->data->first << "-->" << root->last->root->data->first << std::endl;
 					return root->find(k)->data->second;
 				}
 

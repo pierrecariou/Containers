@@ -13,6 +13,7 @@ namespace ft = std;
 #endif
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #define MAX_RAM 4294967296
 #define BUFFER_SIZE 4096
@@ -407,15 +408,21 @@ int main(int argc, char** argv) {
 	std::cout << std::endl;
 	ft::map<char,int> first;
 
-	first['z']=10;
-	std::cout << first['z'] << std::endl;
+	first['e']=10;
+	std::cout << first['e'] << std::endl;
 	std::cout << (first['b'] = 30) << std::endl;
 	std::cout << first['b']  << std::endl;
 	first['c']=50;
 	first['d']=70;
+	first['z']=100;
 	first['a']=90;
-	std::cout << first['d']  << " " << first['c'] << first['a'] << std::endl;
-	//ft::map<char,int> second (first.begin(),first.end());
+	std::cout << first['d']  << " " << first['c'] << first['z'] << first['a'] << std::endl;
+
+	for (ft::map<char, int>::iterator it = first.begin(); it != first.end(); it++) {
+		std::cout << "[" << (*it).first << ", " << (*it).second << "]" << std::endl;
+		//sleep(1);
+	}
+	//ft::map<char,int> second (first.begin(), first.end());
 
 	//std::map<char,int> third (second);
 

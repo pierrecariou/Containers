@@ -19,13 +19,13 @@ namespace ft {
 			IteratorBidirectional() {}
 			IteratorBidirectional(It x) : p(x) {}
 			IteratorBidirectional(const IteratorBidirectional& mit) : p(mit.p) {}
-			IteratorBidirectional& operator++() {++p;return *this;}
-			IteratorBidirectional& operator--() {--p;return *this;}
+			IteratorBidirectional& operator++() {p = ++(*p);return *this;}
+			IteratorBidirectional& operator--() {p = --(*p);return *this;}
 			IteratorBidirectional operator++(int) {IteratorBidirectional tmp(*this); operator++(); return tmp;}
 			IteratorBidirectional operator--(int) {IteratorBidirectional tmp(*this); operator--(); return tmp;}
-			bool operator==(const IteratorBidirectional& rhs) const {return p==rhs.p;}
-			bool operator!=(const IteratorBidirectional& rhs) const {return p!=rhs.p;}
-			Ref operator*() {return *p;}
+			bool operator==(const IteratorBidirectional& rhs) const {return p->data==rhs.p->data;}
+			bool operator!=(const IteratorBidirectional& rhs) const {return p->data!=rhs.p->data;}
+			Ref operator*() {return *(p->data);}
 
 		protected:
 			It	p;

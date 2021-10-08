@@ -405,31 +405,93 @@ int main(int argc, char** argv) {
 	std::cout << mycomp(2, 3)  << std::endl;
 
 	{
-	std::cout << std::endl;
-	ft::map<char,int> first;
 
-	first['e']=10;
-	std::cout << first['e'] << std::endl;
-	std::cout << (first['b'] = 30) << std::endl;
-	std::cout << first['b']  << std::endl;
-	first['c']=50;
-	first['d']=70;
-	first['z']=100;
-	first['a']=90;
-	std::cout << first['d']  << " " << first['c'] << first['z'] << first['a'] << std::endl;
+		std::cout << std::endl;
+		ft::map<char,int> first;
 
-	for (ft::map<char, int>::iterator it = first.begin(); it != first.end(); it++) {
-		std::cout << "[" << (*it).first << ", " << (*it).second << "]" << std::endl;
-		//sleep(1);
+		//ft::map<char, int>::iterator ite = first.begin();
+		//std::cout << ite->first;
+
+
+		first['e']=10;
+		std::cout << first['e'] << std::endl;
+		std::cout << (first['b'] = 30) << std::endl;
+		std::cout << first['b']  << std::endl;
+		first['c']=50;
+		first['d']=70;
+		first['z']=100;
+		first['a']=90;
+		std::cout << first['d']  << " " << first['c'] << first['z'] << first['a'] << std::endl;
+
+
+		ft::map<char, int>::iterator it;
+
+		it=first.find('z');
+		first.erase (it);  
+
+
+		ft::map<char,int> second (first.begin(), first.end());
+
+		ft::map<char,int> third (second);
+
+		for (ft::map<char, int>::iterator it = third.begin(); it != third.end(); it++) {
+			std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
+			//sleep(1);
+		}
+
+		for (ft::map<char, int>::reverse_iterator it = third.rbegin(); it != third.rend(); it++) {
+			std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
+			//sleep(1);
+		}
+
+		{
+			ft::map<char,int> mymap;
+
+			mymap['x'] = 100;
+			mymap['y'] = 200;
+			mymap['z'] = 300;
+
+			// show content:
+			ft::map<char,int>::reverse_iterator rit;
+			for (rit=mymap.rbegin(); rit!=mymap.rend(); ++rit)
+				std::cout << rit->first << " => " << rit->second << '\n';
+		}
+
+		//std::map<char,int,classcomp> fourth;                 // class as Compare
+
+		//bool(*fn_pt)(char,char) = fncomp;
+		//std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
 	}
-	//ft::map<char,int> second (first.begin(), first.end());
 
-	//std::map<char,int> third (second);
+	{
+		ft::map<char,int> mymap;
+		ft::map<char,int>::iterator it;
 
-	//std::map<char,int,classcomp> fourth;                 // class as Compare
+		// insert some values:
+		mymap['a']=10;
+		mymap['b']=20;
+		mymap['c']=30;
+		mymap['d']=40;
+		mymap['e']=50;
+		mymap['f']=60;
 
-	//bool(*fn_pt)(char,char) = fncomp;
-	//std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
+		it=mymap.find('b');
+		mymap.erase (it);                   // erasing by iterator
+
+		for (it = mymap.begin(); it != mymap.end(); ++it)
+			std::cout << it->first << "=>" << it->second << std::endl;
+
+/**
+		mymap.erase ('c');                  // erasing by key
+
+		it=mymap.find ('e');
+		mymap.erase ( it, mymap.end() );    // erasing by range
+
+		// show content:
+		for (it=mymap.begin(); it!=mymap.end(); ++it)
+			std::cout << it->first << " => " << it->second << '\n';
+			**/
+
 	}
 
 

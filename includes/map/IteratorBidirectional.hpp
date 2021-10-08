@@ -6,7 +6,7 @@
 namespace ft {	
 
 	// IteratorBidirectional
-	template <typename It, typename Ref>
+	template <typename It, typename Ref, typename Pair>
 		class IteratorBidirectional : public iterator<typename iterator_traits<It>::iterator_category,
 		typename iterator_traits<It>::value_type,
 		typename iterator_traits<It>::difference_type,
@@ -15,6 +15,7 @@ namespace ft {
 	{
 		public:
 			typedef std::ptrdiff_t	difference_type;
+			typedef Pair			value_type;
 
 			IteratorBidirectional() {}
 			IteratorBidirectional(It x) : p(x) {}
@@ -26,27 +27,29 @@ namespace ft {
 			bool operator==(const IteratorBidirectional& rhs) const {return p->data==rhs.p->data;}
 			bool operator!=(const IteratorBidirectional& rhs) const {return p->data!=rhs.p->data;}
 			Ref operator*() {return *(p->data);}
+			value_type* operator->() {return p->data;}
 
 		protected:
 			It	p;
 	};
 
-	template <typename It, typename Ref>	
-		class ReverseIteratorBidirectional : public IteratorBidirectional<It, Ref>
+	template <typename It, typename Ref, typename Pair>	
+		class ReverseIteratorBidirectional : public IteratorBidirectional<It, Ref, Pair>
 	{
 		public:
 			typedef std::ptrdiff_t	difference_type;
+			typedef Pair			value_type;
 
 			ReverseIteratorBidirectional() : parent() {}
 			ReverseIteratorBidirectional(It x) : parent(x){}
 			ReverseIteratorBidirectional(const ReverseIteratorBidirectional& mit) : parent(mit) {}
-			ReverseIteratorBidirectional& operator++() {--this->p;return *this;}
-			ReverseIteratorBidirectional& operator--() {++this->p;return *this;}
+			ReverseIteratorBidirectional& operator++() {this->p = --(*this->p);return *this;}
+			ReverseIteratorBidirectional& operator--() {this->p = ++(*this->p);}
 			ReverseIteratorBidirectional operator++(int) {ReverseIteratorBidirectional tmp(*this); operator++(); return tmp;}
 			ReverseIteratorBidirectional operator--(int) {ReverseIteratorBidirectional tmp(*this); operator--(); return tmp;}
 
 		private:
-			typedef	IteratorBidirectional<It, Ref>	parent;
+			typedef	IteratorBidirectional<It, Ref, Pair>	parent;
 	};
 }
 

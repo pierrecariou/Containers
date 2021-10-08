@@ -34,14 +34,14 @@ namespace ft {
 			node(self* root) : root(root), left(NULL), right(NULL) {
 				data = NULL;
 			}
-			
+
 			//root constructor
 			node(allocator_type alloc, key_compare comp, size_type n, const key_type& k) :
-				root(NULL), left(NULL), right(new self(this)), alloc(alloc), comp(comp), n(n + 1), first(this), last(right) {
-				data = alloc.allocate(1);
-				alloc.construct(data, value_type(k, mapped_type()));
-			}
-			
+				root(NULL), left(new self(this)), right(new self(this)), alloc(alloc), comp(comp), n(n + 1), first(this), last(right) {
+					data = alloc.allocate(1);
+					alloc.construct(data, value_type(k, mapped_type()));
+				}
+
 			//leaf construcor
 			node(allocator_type alloc, key_compare comp, const key_type& k, self* root) : root(root), left(NULL), right(NULL), alloc(alloc), comp(comp) {
 				data = alloc.allocate(1);
@@ -58,14 +58,6 @@ namespace ft {
 			}
 
 			// Member functions
-			void	nodeRight(const value_type& data) {
-				right = self(data, this);
-			}
-
-			void	nodeLeft(const value_type& data) {
-				left = self(data, this);
-			}
-
 			self*	findNext(self* node, self* nodeprev) {
 				if (node->right != NULL && node->right != nodeprev)
 					return node->right;
@@ -76,6 +68,18 @@ namespace ft {
 
 			self*	operator++() {
 				return findNext(this, NULL);
+			}
+
+			self*	findPrev(self* node, self* nodeprev) {
+				if (node->left != NULL && node->left != nodeprev)
+					return node->left;
+				if (node->root->right == node)
+					return node->root;
+				return findPrev(node->root, node);
+			}
+
+			self*	operator--() {
+				return findPrev(this, NULL);
 			}
 
 			self*	newNode(const key_type& k, self* node, size_type& n, self*& first, self*& last) {
@@ -89,8 +93,13 @@ namespace ft {
 					}
 					return node->right;
 				}
+				self* cp = first->left;
 				node->left = new self(alloc, comp, k, node);
-				first = (comp(first->data->first, k)) ? first : node->left;
+				if (!comp(first->data->first, k)) {
+					delete cp;
+					first = node->left;
+					node->left->left = new self(node->left);
+				}
 				return node->left;
 			}
 
@@ -99,7 +108,7 @@ namespace ft {
 					return node;
 				if (node->right != NULL && node->right->data != NULL && comp(node->data->first, k))
 					node = node->right;
-				else if (node->left != NULL && !comp(node->data->first, k))
+				else if (node->left != NULL && node->left->data != NULL && !comp(node->data->first, k))
 					node = node->left;
 				else
 					return node->newNode(k, node, n, first, last);
@@ -108,6 +117,53 @@ namespace ft {
 
 			self*	find(const key_type& k) {
 				return searchNode(k, this, this->n, this->first, this->last);
+			}
+
+			void	deleteLeaf() {
+				if (root->left == this)
+					root->left = NULL;
+				else
+					root->right = NULL;				
+			}
+
+			void	deleteOneChild() {
+				if (root->left == this) {
+					if (right != NULL) {
+						root->left = right;
+						right->root = root;
+					} else {
+						root->left = left;
+						left->root = root;
+					}
+				} else {
+					if (right != NULL) {
+						root->right = right;
+						right->root = root;
+					} else {
+						root->right = left;
+						left->root = root;
+					}
+				}				
+			}
+
+			void	searchMaxLeft(self*& node, self* p) {
+				if (node->right == NULL) {
+					if (node->left != NULL) {
+						node->left->root = node->root;
+						node->root->right = node->left;
+					}
+					else
+						node->root->right = NULL;
+					node->root = p->root;
+					node->left = p->left;
+					node->right = p->right;
+					return ;
+				}
+				searchMaxLeft(node->right, p);
+			}
+
+			void	deleteTwoChild() {
+				searchMaxLeft(left, this);
 			}
 		};
 }

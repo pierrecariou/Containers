@@ -144,7 +144,7 @@ namespace ft {
 					return alloc.max_size();
 				}
 
-				void resize (size_type n, value_type val = value_type()) {	
+				void resize (size_type n, value_type val = value_type()) {
 					p = first;
 					if (n < size()) {
 						if (n == 0)

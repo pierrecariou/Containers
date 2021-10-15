@@ -47,13 +47,52 @@ struct Buffer
   };
  **/
 
-
 bool fncomp (char lhs, char rhs) {return lhs<rhs;}
 
 struct classcomp {
 	bool operator() (const char& lhs, const char& rhs) const
 	{return lhs<rhs;}
 };
+
+void	test_delete_map(int i) {
+	std::cout << std::endl;
+	std::cout << "TEST: " << i << std::endl;
+	ft::map<int,int> first;
+
+	first[12]=10;
+	first[5]=50;
+	first[3]=70;
+	first[7]=100;
+	first[1]=90;
+	first[9]=90;
+	first[8]=90;
+	first[11]=90;
+	first[14]=90;
+	first[13]=90;
+	first[17]=90;
+	first[20]=90;
+	first[18]=90;
+	first[16]=90;
+
+	first[2]=90;
+	first[4]=90;
+	first[6]=90;
+	first[10]=90;
+	first[15]=90;
+	first[19]=90;
+
+
+	ft::map<int, int>::iterator it;
+
+	it=first.find(i);
+	first.erase(it);
+
+	for (ft::map<int, int>::iterator it = first.begin(); it != first.end(); it++) {
+		std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
+		//third.erase(it);
+		//sleep(1);
+	}
+}
 
 int main(int argc, char** argv) {
 	if (argc != 2)
@@ -416,52 +455,66 @@ int main(int argc, char** argv) {
 		first['e']=10;
 		std::cout << first['e'] << std::endl;
 		std::cout << (first['b'] = 30) << std::endl;
-		std::cout << first['b']  << std::endl;
+		std::cout << first['b'] << std::endl;
 		first['c']=50;
 		first['d']=70;
 		first['z']=100;
 		first['a']=90;
 		std::cout << first['d']  << " " << first['c'] << first['z'] << first['a'] << std::endl;
 
-
-		ft::map<char, int>::iterator it;
-
-		it=first.find('z');
-		first.erase (it);  
-
-
-		ft::map<char,int> second (first.begin(), first.end());
-
-		ft::map<char,int> third (second);
-
-		for (ft::map<char, int>::iterator it = third.begin(); it != third.end(); it++) {
+		for (ft::map<char, int>::iterator it = first.begin(); it != first.end(); it++) {
 			std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
+			//third.erase(it);
 			//sleep(1);
 		}
 
+		ft::map<char, int>::iterator it;
+
+		it=first.find('e');
+		first.erase(it);
+		//std::cout << "TRY   " <<  first.begin()->first << std::endl;
+
+		for (ft::map<char, int>::iterator it = first.begin(); it != first.end(); it++) {
+			std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
+			//third.erase(it);
+			//sleep(1);
+		}
+
+		ft::map<char,int> second (first.begin(), first.end());
+
+		ft::map<char,int> third (second);	
 		for (ft::map<char, int>::reverse_iterator it = third.rbegin(); it != third.rend(); it++) {
 			std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
 			//sleep(1);
 		}
 
-		{
-			ft::map<char,int> mymap;
-
-			mymap['x'] = 100;
-			mymap['y'] = 200;
-			mymap['z'] = 300;
-
-			// show content:
-			ft::map<char,int>::reverse_iterator rit;
-			for (rit=mymap.rbegin(); rit!=mymap.rend(); ++rit)
-				std::cout << rit->first << " => " << rit->second << '\n';
+		for (ft::map<char, int>::iterator it = third.begin(); it != third.end(); it++) {
+			std::cout << "[" << it->first << ", " << it->second << "]" << std::endl;
+			//third.erase(it);
+			//sleep(1);
 		}
-
-		//std::map<char,int,classcomp> fourth;                 // class as Compare
-
-		//bool(*fn_pt)(char,char) = fncomp;
-		//std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
 	}
+
+	for (int i = 1; i < 21; i++)
+		test_delete_map(i);
+
+	{
+		ft::map<char,int> mymap;
+
+		mymap['x'] = 100;
+		mymap['y'] = 200;
+		mymap['z'] = 300;
+
+		// show content:
+		ft::map<char,int>::reverse_iterator rit;
+		for (rit=mymap.rbegin(); rit!=mymap.rend(); ++rit)
+			std::cout << rit->first << " => " << rit->second << '\n';
+	}
+
+	//std::map<char,int,classcomp> fourth;                 // class as Compare
+
+	//bool(*fn_pt)(char,char) = fncomp;
+	//std::map<char,int,bool(*)(char,char)> fifth (fn_pt); // function pointer as Compare
 
 	{
 		ft::map<char,int> mymap;
@@ -478,10 +531,6 @@ int main(int argc, char** argv) {
 		it=mymap.find('b');
 		mymap.erase (it);                   // erasing by iterator
 
-		for (it = mymap.begin(); it != mymap.end(); ++it)
-			std::cout << it->first << "=>" << it->second << std::endl;
-
-/**
 		mymap.erase ('c');                  // erasing by key
 
 		it=mymap.find ('e');
@@ -490,7 +539,6 @@ int main(int argc, char** argv) {
 		// show content:
 		for (it=mymap.begin(); it!=mymap.end(); ++it)
 			std::cout << it->first << " => " << it->second << '\n';
-			**/
 
 	}
 

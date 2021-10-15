@@ -24,8 +24,8 @@ namespace ft {
 			IteratorBidirectional& operator--() {p = --(*p);return *this;}
 			IteratorBidirectional operator++(int) {IteratorBidirectional tmp(*this); operator++(); return tmp;}
 			IteratorBidirectional operator--(int) {IteratorBidirectional tmp(*this); operator--(); return tmp;}
-			bool operator==(const IteratorBidirectional& rhs) const {return p->data==rhs.p->data;}
-			bool operator!=(const IteratorBidirectional& rhs) const {return p->data!=rhs.p->data;}
+			bool operator==(const IteratorBidirectional& rhs) const {if (p==NULL || rhs.p==NULL) {return true;} return p->data==rhs.p->data;}
+			bool operator!=(const IteratorBidirectional& rhs) const {/*std::cout << "!="<< p << rhs.p<< std::endl*/;if (p==NULL || rhs.p==NULL) {return false;} return p->data!=rhs.p->data;}
 			Ref operator*() {return *(p->data);}
 			value_type* operator->() {return p->data;}
 
@@ -44,7 +44,7 @@ namespace ft {
 			ReverseIteratorBidirectional(It x) : parent(x){}
 			ReverseIteratorBidirectional(const ReverseIteratorBidirectional& mit) : parent(mit) {}
 			ReverseIteratorBidirectional& operator++() {this->p = --(*this->p);return *this;}
-			ReverseIteratorBidirectional& operator--() {this->p = ++(*this->p);}
+			ReverseIteratorBidirectional& operator--() {this->p = ++(*this->p);return *this;}
 			ReverseIteratorBidirectional operator++(int) {ReverseIteratorBidirectional tmp(*this); operator++(); return tmp;}
 			ReverseIteratorBidirectional operator--(int) {ReverseIteratorBidirectional tmp(*this); operator--(); return tmp;}
 

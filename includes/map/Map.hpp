@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <sstream>
+#include <unistd.h>
 
 namespace ft {
 
@@ -40,17 +41,17 @@ namespace ft {
 				typedef typename allocator_type::pointer							pointer;
 				typedef typename allocator_type::const_pointer						const_pointer;
 				typedef IteratorBidirectional<node<value_type,
-				allocator_type, key_type, mapped_type, key_compare>*,
-				value_type&, value_type > 											iterator;
+						allocator_type, key_type, mapped_type, key_compare>*,
+						value_type&, value_type > 											iterator;
 				typedef IteratorBidirectional<node<value_type,
-				allocator_type, key_type, mapped_type, key_compare>*,
-				value_type&, value_type >											const_iterator;
+						allocator_type, key_type, mapped_type, key_compare>*,
+						value_type&, value_type >											const_iterator;
 				typedef ReverseIteratorBidirectional<node<value_type,
-				allocator_type, key_type, mapped_type, key_compare>*,
-				value_type&, value_type >											reverse_iterator;
+						allocator_type, key_type, mapped_type, key_compare>*,
+						value_type&, value_type >											reverse_iterator;
 				typedef ReverseIteratorBidirectional<node<value_type,
-				allocator_type, key_type, mapped_type, key_compare>*,
-				value_type&, value_type >											const_reverse_iterator;
+						allocator_type, key_type, mapped_type, key_compare>*,
+						value_type&, value_type >											const_reverse_iterator;
 				typedef std::ptrdiff_t												difference_type;
 				typedef std::size_t													size_type;
 
@@ -59,12 +60,12 @@ namespace ft {
 					alloc(alloc), root(NULL), comp(comp) { }
 
 				template <class InputIterator>
-				map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-						        const allocator_type& alloc = allocator_type()) : alloc(alloc), root(NULL), comp(comp) {
-					for (InputIterator it = first; it != last; it++) {
-						operator[](it->first) = it->second;
+					map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
+							const allocator_type& alloc = allocator_type()) : alloc(alloc), root(NULL), comp(comp) {
+						for (InputIterator it = first; it != last; it++) {
+							operator[](it->first) = it->second;
+						}
 					}
-				}
 
 				map (const map& x) : alloc(x.alloc), root(NULL), comp(x.comp) {
 					for (iterator it = x.begin(); it != x.end(); it++) {
@@ -75,9 +76,9 @@ namespace ft {
 				// DESTRUCTORS //
 
 				~map() {
-					//clear();					
+					clear();
 				}
-				
+
 				key_compare key_comp() const {
 					return comp;
 				}
@@ -109,11 +110,11 @@ namespace ft {
 				reverse_iterator rend() {
 					return (empty()) ? reverse_iterator(NULL) : reverse_iterator(root->first->left);
 				}
-				
+
 				const_reverse_iterator rend() const {
 					return (empty()) ? const_reverse_iterator(NULL) : const_reverse_iterator(root->first->left);
 				}
-				 
+
 				bool empty() const {
 					return root==NULL;
 				}
@@ -135,49 +136,66 @@ namespace ft {
 
 				size_type erase (const key_type& k) {
 					node_pointer p = root->find(k);	
-						if (p->right == NULL && p->left == NULL) // p is a leaf
-							p->deleteLeaf();
-						else if (!(p->right != NULL && p->left != NULL)) // p has one child
-							p->deleteOneChild();
-						else // p has 2 children
-							p->deleteTwoChild();
+					/*
+					   if (p == root)
+					   std::cout << "element is root" << std::endl;
+					//std::cout << "p:" << p << " / "<< "r:" << root <<"-->" <<  "size: " << size() << std::endl;
+					std::cout <<"--- " << root->data->first << " ---"  << std::endl;
+					if (root->left == NULL)
+					std::cout << "left: (null)" << std::endl;
+					else if (root->left->data != NULL)
+					std::cout << "left: " << root->left->data->first << std::endl;
+					else if (root->left == root->first->left && root->left->data == NULL)
+					std::cout << "left: " << "first-1" << std::endl;
+					if (root->right == NULL)
+					std::cout << "right: (null)" << std::endl;
+					else if (root->right->data != NULL)
+					std::cout << "right: " << root->right->data->first << std::endl;
+					else if (root->right == root->last && root->right->data == NULL)
+					std::cout << "right: " << "last" << std::endl;
+					std::cout << "---------" << std::endl;
+					 */
+					if (p == root && size() == 1) { // map has only one element inside
+						delete root->last;
+						delete root->first->left;
+						root = NULL;
+					} else if (p->right == NULL && p->left == NULL) // p is a leaf
+						p->deleteLeaf();
+					else if (!(p->right != NULL && p->left != NULL)) // p has one child
+						p->deleteOneChild();
+					else { // p has 2 children
+						if (p == root)
+							(root = p->deleteTwoChild(root))->becomeRoot(p);
+						else
+							p->deleteTwoChild(root);
+					}
 					alloc.destroy(p->data);
 					alloc.deallocate(p->data, 1);
 					delete p;
+					if (root != NULL) {
+						root->n-=1;
+						root->first = root->findFirst(root);
+					}
 					return 1;
 				}
 
-				/**
 				void erase (iterator first, iterator last) {
-					for (iterator it = first; it != last; ++it) {
-						erase(it);
-					}
-					root = NULL;
-				}
-				**/
-
-				void clear() {
-					/**
-					size_t n = size();
 					if (empty())
 						return ;
-					delete root->first->left;
-					delete root->last;
-					node_pointer p = root->first;	
-					for (size_t i = 0; i < n; i++) {
-						node_pointer cp = p;
-						alloc.destroy(p->data);
-						alloc.deallocate(p->data, 1);
-						p = (*p).findNext(p, NULL);
-						delete cp;
-					}	
-					root = NULL;
-					**/
-					iterator b = begin();
-					iterator e = end();
-					for (iterator it = b; it != e; it++)
-						erase(it);	
-					root = NULL;
+					iterator cp = first;
+					for (iterator it = first; it != last; it = cp) {
+						if (root->n != 1) {
+							cp = ++it;
+							--it;
+						}
+						erase(it);
+						if (empty())
+							break;
+					}
+				}
+
+				void clear() {
+					erase(begin(), end());
 				}
 
 				iterator find (const key_type& k) {

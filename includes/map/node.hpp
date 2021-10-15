@@ -42,13 +42,13 @@ namespace ft {
 					alloc.construct(data, value_type(k, mapped_type()));
 				}
 
-			//leaf construcor
+			//child constructor
 			node(allocator_type alloc, key_compare comp, const key_type& k, self* root) : root(root), left(NULL), right(NULL), alloc(alloc), comp(comp) {
 				data = alloc.allocate(1);
 				alloc.construct(data, value_type(k, mapped_type()));
 			}
 
-			// assign
+			// operator overloads
 			self& operator= (const self& x) {
 				data = x.data;
 				root = x.root;
@@ -57,10 +57,17 @@ namespace ft {
 				return *this;
 			}
 
-			// Member functions
+			self*	deepLeft(self* node) {
+				if (node->left == NULL)
+					return node;
+				if (node->left->data == NULL)
+					return node;
+				return deepLeft(node->left);
+			}
+
 			self*	findNext(self* node, self* nodeprev) {
 				if (node->right != NULL && node->right != nodeprev)
-					return node->right;
+					return deepLeft(node->right);
 				if (node->root->left == node)
 					return node->root;
 				return findNext(node->root, node);
@@ -70,9 +77,17 @@ namespace ft {
 				return findNext(this, NULL);
 			}
 
+			self*	deepRight(self* node) {
+				if (node->right == NULL)
+					return node;
+				if (node->right->data == NULL)
+					return node;
+				return deepRight(node->right);
+			}
+
 			self*	findPrev(self* node, self* nodeprev) {
 				if (node->left != NULL && node->left != nodeprev)
-					return node->left;
+					return deepRight(node->left);
 				if (node->root->right == node)
 					return node->root;
 				return findPrev(node->root, node);
@@ -82,6 +97,7 @@ namespace ft {
 				return findPrev(this, NULL);
 			}
 
+			// Member functions
 			self*	newNode(const key_type& k, self* node, size_type& n, self*& first, self*& last) {
 				n+=1;
 				if (comp(node->data->first, k)) {
@@ -119,11 +135,18 @@ namespace ft {
 				return searchNode(k, this, this->n, this->first, this->last);
 			}
 
+			void	becomeRoot(self* old_root) {
+				root = NULL;
+				first = (old_root == old_root->first) ? this : old_root->first;
+				last = old_root->last;
+				n = old_root->n;
+			}
+
 			void	deleteLeaf() {
 				if (root->left == this)
 					root->left = NULL;
 				else
-					root->right = NULL;				
+					root->right = NULL;
 			}
 
 			void	deleteOneChild() {
@@ -146,7 +169,7 @@ namespace ft {
 				}				
 			}
 
-			void	searchMaxLeft(self*& node, self* p) {
+			self*	searchMaxLeft(self* node, self* p) {
 				if (node->right == NULL) {
 					if (node->left != NULL) {
 						node->left->root = node->root;
@@ -154,16 +177,97 @@ namespace ft {
 					}
 					else
 						node->root->right = NULL;
+					p->left->root = node;
+					p->right->root = node;
 					node->root = p->root;
 					node->left = p->left;
 					node->right = p->right;
-					return ;
+					if (node->root != NULL) {
+						if (p->root->left == p)
+							p->root->left = node;
+						else
+							p->root->right = node;
+					}
+					return node;
 				}
-				searchMaxLeft(node->right, p);
+				return searchMaxLeft(node->right, p);
 			}
 
-			void	deleteTwoChild() {
-				searchMaxLeft(left, this);
+			self*	findFirst(self *node) {
+				if (node->left == NULL)
+					return node;
+				if (node->left->data == NULL) {
+					return node;
+				}
+				return findFirst(node->left);
+			}
+
+			self*	findLast(self *node) {
+				if (node->right == NULL)
+					return node;
+				return findLast(node->right);
+			}
+
+			self* leftIsFirst(self* rroot) {
+				if (left->data == NULL && this == rroot) { // left == first - 1 && this == root
+					right->root = NULL;
+					rroot->first = findFirst(right);
+					rroot->first->left = left;
+					rroot->first->left->root = rroot->first;
+					return right;
+				}
+				else if (left->data == NULL) { // left == first - 1
+					self* before_first = left;
+					left = NULL;
+					deleteOneChild();
+					rroot->first = findFirst(rroot);
+					rroot->first->left = before_first;
+					rroot->first->left->root = rroot->first;
+					return right;
+				}
+				return NULL;
+			}
+
+			self* rightIsLast(self* rroot) {
+				if (right->data == NULL && this == rroot) { // right == last && this == root
+					left->root = NULL;
+					rroot->last = findLast(left);
+					rroot->last->right = right;
+					rroot->last->right->root = rroot->last;
+					rroot->last = right;
+					return left;
+				}
+				else if (right->data == NULL) { // right === last
+					self* last = right;
+					right = NULL;
+					deleteOneChild();
+					rroot->last = findLast(rroot);
+					rroot->last->right = last;
+					rroot->last->right->root = rroot->last;
+					rroot->last = last;
+					return left;
+				}
+				return NULL;
+			}
+
+			self*	deleteTwoChild(self* rroot) {	
+				self* ret;
+
+				if ((ret = leftIsFirst(rroot)) != NULL)
+					return ret;
+				else if ((ret = rightIsLast(rroot)) != NULL)
+					return ret;	
+				else if (left->right == NULL && left->data != NULL) { // special case
+					left->right = right;
+					left->right->root = left;
+					left->root = root;
+					if (root->left == this)
+						root->left = left;
+					else
+						root->right = left;
+					return left;
+				}
+				return searchMaxLeft(left->right, this); // normal case
 			}
 		};
 }

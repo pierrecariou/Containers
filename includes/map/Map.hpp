@@ -73,16 +73,21 @@ namespace ft {
 					}
 				}
 
-				// DESTRUCTORS //
-
+				// DESTRUCTOR //
 				~map() {
 					clear();
 				}
 
-				key_compare key_comp() const {
-					return comp;
+				// operator= //
+				map& operator= (const map& x) {
+					clear();
+					for (iterator it = x.begin(); it != x.end(); it++) {
+						operator[](it->first) = it->second;
+					}
+					return *this;
 				}
 
+				// ITERATORS
 				iterator begin() {
 					return (empty()) ? iterator(NULL) : iterator(root->first);
 				}
@@ -115,6 +120,7 @@ namespace ft {
 					return (empty()) ? const_reverse_iterator(NULL) : const_reverse_iterator(root->first->left);
 				}
 
+				// CAPACITY //
 				bool empty() const {
 					return root==NULL;
 				}
@@ -123,11 +129,51 @@ namespace ft {
 					return (root == NULL) ? 0 : root->n;
 				}
 
+				size_type max_size() const {
+					return alloc.max_size();
+				}
+
+				// ELEMENT ACCESS //
 				mapped_type& operator[] (const key_type& k) {
 					if (root == NULL)
 						return ((root = new node(alloc, comp, 0, k))->data->second);
-					//std::cout << k << ": " << root->first->data->first << "-->" << root->last->root->data->first << std::endl;
 					return root->find(k)->data->second;
+				}
+				
+				// MODIFIERS //
+				pair<iterator,bool> insert (const value_type& val) {
+					iterator itfind;
+					node_pointer newnode;
+
+					if (root == NULL) {
+						(root = new node(alloc, comp, 0, val.first))->data->second = val.second;
+						return ft::make_pair(iterator(root), true);
+					}
+					if ((itfind = find(val.first)) != end())
+						return ft::make_pair(itfind, false);
+					(newnode = root->find(val.first))->data->second = val.second;
+					return ft::make_pair(iterator(newnode), true);
+				}
+
+				iterator insert (iterator position, const value_type& val) {
+					iterator itfind;
+					node_pointer newnode;
+
+					if (root == NULL) {
+						(root = new node(alloc, comp, 0, val.first))->data->second = val.second;
+						return iterator(root);
+					}
+					if ((itfind = find(val.first)) != end())
+						return itfind;
+					(newnode = root->find(position->first)->find(val.first))->data->second = val.second;
+					return iterator(newnode);
+				}
+
+				template <class InputIterator>
+				void insert (InputIterator first, InputIterator last) {
+					for (InputIterator it = first; it != last; it++) {
+						operator[](it->first) = it->second;
+					}
 				}
 
 				void erase (iterator position) {
@@ -136,25 +182,6 @@ namespace ft {
 
 				size_type erase (const key_type& k) {
 					node_pointer p = root->find(k);	
-					/*
-					   if (p == root)
-					   std::cout << "element is root" << std::endl;
-					//std::cout << "p:" << p << " / "<< "r:" << root <<"-->" <<  "size: " << size() << std::endl;
-					std::cout <<"--- " << root->data->first << " ---"  << std::endl;
-					if (root->left == NULL)
-					std::cout << "left: (null)" << std::endl;
-					else if (root->left->data != NULL)
-					std::cout << "left: " << root->left->data->first << std::endl;
-					else if (root->left == root->first->left && root->left->data == NULL)
-					std::cout << "left: " << "first-1" << std::endl;
-					if (root->right == NULL)
-					std::cout << "right: (null)" << std::endl;
-					else if (root->right->data != NULL)
-					std::cout << "right: " << root->right->data->first << std::endl;
-					else if (root->right == root->last && root->right->data == NULL)
-					std::cout << "right: " << "last" << std::endl;
-					std::cout << "---------" << std::endl;
-					 */
 					if (p == root && size() == 1) { // map has only one element inside
 						delete root->last;
 						delete root->first->left;
@@ -198,6 +225,22 @@ namespace ft {
 					erase(begin(), end());
 				}
 
+				void swap (map& x) {
+					ft::swap(alloc, x.alloc);
+					ft::swap(root, x.root);
+					ft::swap(comp, x.comp);
+				}
+				
+				// OBSERVERS //
+				key_compare key_comp() const {
+					return comp;
+				}
+
+				value_compare value_comp() const {
+					return value_compare(key_comp());
+				}
+
+				// OPERATIONS //
 				iterator find (const key_type& k) {
 					for (iterator it = begin(); it != end(); it++) {
 						if (!comp(it->first, k) && !comp(k, it->first))
@@ -207,11 +250,72 @@ namespace ft {
 				}
 
 				const_iterator find (const key_type& k) const {
-					for (const_iterator it = begin(); it != end(); it++) {
+					for (iterator it = begin(); it != end(); it++) {
 						if (!comp(it->first, k) && !comp(k, it->first))
 							return it;
 					}
 					return end();
+				}
+
+				size_type count (const key_type& k) const {
+					return (find(k) != end()) ? 1 : 0;
+				}
+
+				iterator lower_bound (const key_type& k) {
+					iterator ret;
+
+					for (iterator it = find(k); it != end(); it++) {
+						if (comp(it->first, k) || (!comp(it->first, k) && !comp(k, it->first)))
+							ret = it;
+					}
+					return ret;
+				}
+
+				const_iterator lower_bound (const key_type& k) const {
+					iterator ret;
+
+					for (iterator it = find(k); it != end(); it++) {
+						if (comp(it->first, k) || (!comp(it->first, k) && !comp(k, it->first)))
+							ret = it;
+					}
+					return ret;
+				}
+
+				iterator upper_bound (const key_type& k) {
+					iterator ret;
+
+					for (iterator it = begin(); it != end(); it++) {
+						if (!comp(it->first, k))
+							ret = it;
+					}
+					return ret;
+				}
+
+				const_iterator upper_bound (const key_type& k) const {
+					iterator ret;
+
+					for (iterator it = begin(); it != end(); it++) {
+						if (!comp(it->first, k))
+							ret = it;
+					}
+					return ret;
+				}
+
+				pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
+					if (find(k) != end())
+						return ft::make_pair(lower_bound(k), upper_bound(k));
+					return ft::make_pair(upper_bound(k), upper_bound(k));
+				}
+
+				pair<iterator,iterator>             equal_range (const key_type& k) {
+					if (find(k) != end())
+						return ft::make_pair(lower_bound(k), upper_bound(k));
+					return ft::make_pair(upper_bound(k), upper_bound(k));
+				}
+
+				// ALLOCATOR //
+				allocator_type get_allocator() const {
+					return alloc;
 				}
 
 			private:

@@ -18,10 +18,10 @@ namespace ft {
 				typedef const value_type*											const_pointer;
 				typedef value_type&													reference;
 				typedef const value_type&											const_reference;
-				typedef IteratorRandomAccess<pointer, reference>					iterator;
-				typedef IteratorRandomAccess<const_pointer, const_reference>		const_iterator;
-				typedef ReverseIteratorRandomAccess<pointer, reference>				reverse_iterator;
-				typedef ReverseIteratorRandomAccess<const_pointer, const_reference>	const_reverse_iterator;
+				typedef IteratorRandomAccess<pointer, reference, value_type>		iterator;
+				typedef IteratorRandomAccess<const_pointer, const_reference, value_type>	const_iterator;
+				typedef ReverseIteratorRandomAccess<pointer, reference, value_type>			reverse_iterator;
+				typedef ReverseIteratorRandomAccess<const_pointer, const_reference, value_type>	const_reverse_iterator;
 				typedef std::ptrdiff_t												difference_type;
 				typedef std::size_t													size_type;
 				typedef Allocator													allocator_type;
@@ -38,7 +38,7 @@ namespace ft {
 					}
 					p = (first = this->alloc.allocate(n));
 					for (size_type i = 0; i < n; i++) {
-						*p = val;
+						this->alloc.construct(p, val);
 						p++;
 					}
 					last = p;
@@ -87,12 +87,12 @@ namespace ft {
 
 				// ASSIGN CONTENT //
 				 vector& operator= (const vector& x) {
-					~vector();
+					this->~vector();
 					c = x.capacity();
 					n = x.size();
 					if (c == 0) {
 						last = (first = NULL);
-						return ;
+						return *this;
 					}
 					p = (first = alloc.allocate(c));
 					for (const_iterator i = x.begin(); i != x.end(); i++)	{
@@ -100,23 +100,24 @@ namespace ft {
 						p++;
 					}
 					this->last = p;
+					return *this;
 				}
 
 				// ITERATORS //
 				iterator begin() {
 					return iterator(first);
 				}
-					  
+
 				const_iterator begin() const {
 					return const_iterator(first);
-				}
+				}	
 
 				reverse_iterator rbegin() {
-					return reverse_iterator(last - 1);
+					return reverse_iterator(last);
 				}
 
 				const_reverse_iterator rbegin() const {
-					return const_reverse_iterator(last - 1);
+					return const_reverse_iterator(last);
 				}
 
 				iterator end() {
@@ -128,11 +129,11 @@ namespace ft {
 				}
 
 	 			reverse_iterator rend() {
-					return reverse_iterator(first - 1);
+					return reverse_iterator(first);
 				}
 					  
 				const_reverse_iterator rend() const {
-					return const_reverse_iterator(first - 1);
+					return const_reverse_iterator(first);
 				}
 
 				// CAPACITY //
@@ -202,7 +203,10 @@ namespace ft {
 				}
 
 				const_reference operator[] (size_type n) const {
-					return operator[](n);
+					pointer p = first;
+					for (size_type i = 0; i < n; i++)
+						p++;
+					return *p;
 				}	
 
 				reference at (size_type n) {
@@ -218,7 +222,15 @@ namespace ft {
 				}
 				
 				const_reference at (size_type n) const {
-					return at(n);
+					if (n >= size()) {
+						std::stringstream n_s;
+						std::stringstream size_s;
+						n_s << n;
+						size_s << size();
+						throw std::out_of_range("vector::_M_range_check: __n (which is " +
+						n_s.str() +") >= this->size() (which is " + size_s.str() + ")");
+					}
+					return operator[](n);
 				}
 
 				reference front() {
@@ -226,7 +238,7 @@ namespace ft {
 				}
 
 				const_reference front() const {
-					return front();
+					return *first;
 				}
 
 				reference back() {
@@ -234,7 +246,7 @@ namespace ft {
 				}
 
 				const_reference back() const {
-					return back();
+					return *(last - 1);
 				}
 
 				// MODIFIERS //
@@ -244,7 +256,7 @@ namespace ft {
 					this->~vector();
 					if (first == last) {
 						this->n = (c = 0);
-						first = (last = NULL);
+						this->first = (this->last = NULL);
 						return ;
 					}
 					c = (n = ft::distance(first, last));

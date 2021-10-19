@@ -256,7 +256,11 @@ int main(int argc, char** argv) {
 	std::cout << "myvector capacity: " << vector.capacity() << std::endl;
 	std::cout << "myvector size: " << vector.size() << std::endl;
 
-
+	{
+		ft::vector<int>	v(3, 100);
+		ft::vector<int>::const_iterator itb;
+		itb = v.begin();
+	}
 
 	{
 		ft::vector<int> myvector;
@@ -284,6 +288,21 @@ int main(int argc, char** argv) {
 		std::cout << "c: " << myvector.capacity() << std::endl;
 		std::cout << "s: " << myvector.size() << std::endl;
 		std::cout << "a: " << *it << std::endl;
+
+	}
+
+	{
+		ft::vector<std::string> vct(8);
+		ft::vector<std::string> vct2;
+		ft::vector<std::string>::iterator it = vct.begin();
+
+		(void)vct;
+
+		for (unsigned long int i = 0; i < vct.size(); ++i)
+			it[i] = std::string("hello");
+
+		ft::vector<std::string> vct1(vct.begin(), vct.end());
+		(void)vct1;
 
 	}
 

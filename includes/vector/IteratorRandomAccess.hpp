@@ -22,7 +22,9 @@ namespace ft {
 			IteratorRandomAccess() {}
 			IteratorRandomAccess(It x) : p(x) {}
 			IteratorRandomAccess(const iterator& mit) : p(mit.p) {}
+			IteratorRandomAccess(const const_iterator& mit) : p(mit.p) {}
 			IteratorRandomAccess& operator=(const iterator& rhs) {p = rhs.p; return *this;}
+			IteratorRandomAccess& operator=(const const_iterator& rhs) {p = rhs.p; return *this;}
 			IteratorRandomAccess& operator++() {++p;return *this;}
 			IteratorRandomAccess& operator--() {--p;return *this;}
 			IteratorRandomAccess operator++(int) {IteratorRandomAccess tmp(*this); operator++(); return tmp;}

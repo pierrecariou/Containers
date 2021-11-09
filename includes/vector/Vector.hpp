@@ -68,7 +68,7 @@ namespace ft {
 					}
 					p = (this->first = this->alloc.allocate(c));
 					for (const_iterator i = x.begin(); i != x.end(); i++)	{
-						*p = *i;
+						alloc.construct(p, *i);
 						p++;
 					}
 					this->last = p;
@@ -96,7 +96,7 @@ namespace ft {
 					}
 					p = (first = alloc.allocate(c));
 					for (const_iterator i = x.begin(); i != x.end(); i++)	{
-						*p = *i;
+						alloc.construct(p, *i);
 						p++;
 					}
 					this->last = p;
@@ -186,7 +186,7 @@ namespace ft {
 						this->~vector();
 						p = (first = this->alloc.allocate((c = (n > size() * 2) ? n : size() * 2)));
 						for (iterator it = tmp.begin(); it != tmp.end(); it++) {
-							*p = *it;
+							alloc.construct(p, *it);
 							p++;
 						}
 						last = p;
@@ -262,7 +262,7 @@ namespace ft {
 					c = (n = ft::distance(first, last));
 					p = (this->first = this->alloc.allocate(n));
 					for (size_type i = 0; i < n; i++) {
-						*p = *first;
+						alloc.construct(p, *first);
 						first++;
 						p++;
 					}
@@ -278,7 +278,7 @@ namespace ft {
 					}
 					p = (first = this->alloc.allocate((this->n = (c = n))));
 					for (size_type i = 0; i < n; i++) {
-						*p = val;
+						alloc.construct(p, val);
 						p++;
 					}
 					last = p;
@@ -287,7 +287,7 @@ namespace ft {
 				void push_back (const value_type& val) {
 					reserve(n + 1);
 					n+=1;
-					*last = val;
+					alloc.construct(last, val);
 					last+=1;
 				}
 
@@ -311,11 +311,11 @@ namespace ft {
 						it_tmp++;
 					}
 					alloc.destroy(p);
-					*p++ = val;
+					alloc.construct(p++, val);
 					ret = iterator(p - 1);
 					for (iterator it = it_tmp; it != tmp.end(); it++) {
 							alloc.destroy(p);
-							*p++ = *it_tmp++;
+							alloc.construct(p++, *it_tmp++);
 					}
 					return ret;
 				}
@@ -334,11 +334,11 @@ namespace ft {
 					}
 					for (size_type i = 0; i < n; i++) {
 						alloc.destroy(p);
-						*p++ = val;
+						alloc.construct(p++, val);
 					}
 					for (iterator it = it_tmp; it != tmp.end(); it++) {
 							alloc.destroy(p);
-							*p++ = *it_tmp++;
+							alloc.construct(p++, *it_tmp++);
 					}
 				}
 
@@ -360,18 +360,18 @@ namespace ft {
 					}
 					for (InputIterator it = first; it != last; it++) {
 						alloc.destroy(p);
-						*p++ = *it;
+						alloc.construct(p++, *it);
 					}
 					for (iterator it = it_tmp; it != tmp.end(); it++) {
 							alloc.destroy(p);
-							*p++ = *it_tmp++;
+							alloc.construct(p++, *it_tmp++);
 					}
 				}
 				
 				iterator erase (iterator position) {
 					vector<value_type>	tmp(*this);
 					iterator			it_tmp = tmp.begin();
-					iterator			ret;
+					iterator			ret = end() - 1;
 					iterator			cp;
 					p = first;
 					n-=1;
@@ -383,7 +383,7 @@ namespace ft {
 					cp = it_tmp;
 					for (iterator it = it_tmp; it < tmp.end(); it++) {
 						alloc.destroy(p);
-						*p = *it_tmp;
+						alloc.construct(p, *it_tmp);
 						if (cp == it_tmp)
 							ret = iterator(p);
 						p++;
@@ -414,7 +414,7 @@ namespace ft {
 					for (iterator it = first; it != last; it++) {
 						alloc.destroy(p);
 						if (it_tmp < tmp.end())
-							*p = *it_tmp;
+							alloc.construct(p, *it_tmp);
 						if (cp == it_tmp)
 							ret = iterator(p);
 						p++;
@@ -422,7 +422,7 @@ namespace ft {
 					}
 					for (iterator it = it_tmp; it < tmp.end(); it++) {
 						alloc.destroy(p);
-						*p = *it_tmp;
+						alloc.construct(p, *it_tmp);
 						p++;
 						it_tmp++;
 					}

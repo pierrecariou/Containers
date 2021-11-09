@@ -112,19 +112,17 @@ namespace ft {
 				if (comp(node->data->first, k)) {
 					node->right = new self(alloc, comp, k, node);
 					if (comp(last->root->data->first, k)) {
-						self* cp = last;
-						node->right->right = (last = new self(alloc, node->right));
-						cp->deleteNode();
-						//delete cp;
+						node->right->right = last;
+						last->root = node->right;
 					}
 					return node->right;
 				}
 				self* cp = first->left;
 				node->left = new self(alloc, comp, k, node);
 				if (!comp(first->data->first, k)) {
-					cp->deleteNode();
 					first = node->left;
-					node->left->left = new self(alloc, node->left);
+					node->left->left = cp;
+					cp->root = node->left;
 				}
 				return node->left;
 			}
